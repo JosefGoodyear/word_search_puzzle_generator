@@ -7,7 +7,9 @@ app = Flask(__name__)
 size = 20
 word_list = []
 
+
 def horizontal_forward(word):
+    """ Place a word horizontally, from left to right """
     attempt = 0
     while attempt < 10:
         attempt += 1
@@ -25,7 +27,10 @@ def horizontal_forward(word):
     for count, letter in enumerate(word):
         grid[y][x + count] = letter
     return True
+
+
 def horizontal_backward(word):
+    """ Place a word horizontally, from right to left"""
     attempt = 0
     while attempt < 10:
         attempt += 1
@@ -43,7 +48,10 @@ def horizontal_backward(word):
     for count, letter in enumerate(word):
         grid[y][x - count] = letter
     return True
+
+
 def vertical_down(word):
+    """ Place a word vertically, from top to bottom """
     attempt = 0
     while attempt < 10:
         attempt += 1
@@ -61,7 +69,10 @@ def vertical_down(word):
     for count, letter in enumerate(word):
         grid[y + count][x] = letter
     return True
+
+
 def vertical_up(word):
+    """ Place a word vertically, from bottom to top """
     attempt = 0
     while attempt < 10:
         attempt += 1
@@ -79,7 +90,10 @@ def vertical_up(word):
     for count, letter in enumerate(word):
         grid[y - count][x] = letter
     return True
+
+
 def diagonal_up(word):
+    """ Place a word diagonally, from bottom-left to top-right """
     attempt = 0
     while attempt < 10:
         attempt += 1
@@ -97,7 +111,10 @@ def diagonal_up(word):
     for count, letter in enumerate(word):
         grid[y - count][x + count] = letter
     return True
+
+
 def diagonal_down(word):
+    """ Place a word diagonally, from top-left to bottom-right"""
     attempt = 0
     while attempt < 10:
         attempt += 1
@@ -115,29 +132,41 @@ def diagonal_down(word):
     for count, letter in enumerate(word):
         grid[y + count][x + count] = letter
     return True
+
+
 def randomizer():
+    """Randomly choose a placement function, weighted by placement_functions. If placement fails, return False"""
     placement_functions = [vertical_down] * 4 + [vertical_up] * 1 + [diagonal_up] * 2 + [diagonal_down] * 2 + [horizontal_backward] * 1 + [horizontal_forward] * 4
     for word in word_list:
         status = choice(placement_functions)(word)
         if status is False:
             return False
     return True
+
+
 def fill_in_the_blanks():
+    """ Fill in random letters for empty squares in grid"""
     alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     for i in range(size):
         for j in range(size):
             if grid[i][j] == '_':
                 grid[i][j] = choice(alpha)
+
+
 def initialize_grid():
+    """ Replace all letters in grid with '_' """
     for i in range(size):
         for j in range(size):
             grid[i][j] = '_'
+
+
 def populate_puzzle(new_word_list):
+    """ Populate the grid and answer_grid """
     if 'grid' in globals():
         initialize_grid()
     else:
         global grid
-        grid = [ [ '_' for i in range(size)] for j in range(size)]
+        grid = [['_' for i in range(size)] for j in range(size)]
     word_list.clear()
     word_list.extend(new_word_list)
     status = randomizer()
@@ -148,8 +177,11 @@ def populate_puzzle(new_word_list):
     fill_in_the_blanks()
     return True
 
+
 @app.route('/', methods=['POST', 'GET'])
 def input_words():
+    """ Take words from user and return links to a
+    word search puzzle and answer key, or an error message"""
     if request.method == 'POST':
         words = request.form.get('words').upper()
         new_word_list = words.split()
@@ -162,13 +194,18 @@ def input_words():
         return render_template('home2.html')
     return render_template('home.html')
 
+
 @app.route('/puzzle', strict_slashes=False)
 def puzzle():
+    """ Get the generated word search puzzle """
     return render_template('puzzle.html', puzzle=grid, words=word_list)
-    
+
+
 @app.route('/answer', strict_slashes=False)
 def answer():
+    """ Get the generated answer key s"""
     return render_template('puzzle.html', puzzle=answer_grid, words=word_list)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='8000', debug='true')
