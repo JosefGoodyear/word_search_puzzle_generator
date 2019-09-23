@@ -1,0 +1,47 @@
+body {
+    font-family: monospace;
+}
+
+@page {
+    size: auto;   /* auto is the initial value */
+    margin: 0mm;  /* this affects the margin in the printer settings */
+}
+
+h1 {
+    font-size: 40px;
+    text-decoration: underline;
+}
+
+h2 {
+    font-size: 35px;
+}
+
+h3 {
+    font-size: 30px;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+input[type=submit] {
+    font-size:30px;
+}
+.centered {
+    text-align: center;
+}
+
+.word_input {
+    width: 500px;
+}
+.formtext {
+    font-size: 25px;
+}
+
+.title {
+    vertical-align: middle;
+}
+
+.landing {
+    padding-top: 100px;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Word Search</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        <div>
+            <h1 class="centered">Word Search</h1>
+        <div>
+        <h3 class="centered">
+            {% for row in puzzle%}
+                {% for item in row %}
+                    {{ item }}
+                {% endfor %}
+                <br>
+            {% endfor %}
+        </h3>
+        </div>
+        <hr>
+        <div>
+        <h2 class="centered">
+        {% for word in words %}
+            {{ word }}
+        {% endfor %}
+        </h2>
+        </div>
+    </div>
+    </body>
+</html>
