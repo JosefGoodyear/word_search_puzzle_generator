@@ -206,6 +206,6 @@ def answer():
     """ Get the generated answer key s"""
     return render_template('puzzle.html', puzzle=answer_grid, words=word_list)
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='8000', debug='true')
+""" disable app.run for deployment with gunicorn """
+# if __name__ == '__main__':
+#    app.run(host='0.0.0.0', port='8000', debug='true')
