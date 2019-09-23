@@ -4,7 +4,7 @@ body {
 
 @page {
     size: auto;   /* auto is the initial value */
-    margin: 0mm;  /* this affects the margin in the printer settings */
+    margin: 0;
 }
 
 h1 {
@@ -44,4 +44,8 @@ input[type=submit] {
 
 .landing {
     padding-top: 100px;
+}
+
+.wordbank {
+    border: solid;
 }
