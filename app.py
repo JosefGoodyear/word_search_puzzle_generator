@@ -208,5 +208,5 @@ def answer():
     return render_template('puzzle.html', puzzle=session.get('answer_grid'), words=session.get('word_list'))
 
 """ disable app.run for deployment with gunicorn """
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='8000', debug='true')
+#if __name__ == '__main__':
+#    app.run(host='0.0.0.0', port='8000', debug='true')
