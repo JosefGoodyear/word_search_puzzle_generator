@@ -3,12 +3,10 @@ from flask_session import Session
 from random import randrange, choice
 from copy import deepcopy
 
-
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config.from_object(__name__)
 Session(app)
-
 
 
 def horizontal_forward(word):
@@ -20,7 +18,7 @@ def horizontal_forward(word):
         y = randrange(0, session.get('size'))
         x = randrange(0, session.get('size') - len(word) + 1)
         for i in range(len(word)):
-            if grid[y][x + i] != '_' and grid[y][x + i] != word[i]:
+            if session.get('grid')[y][x + i] != '_' and session.get('grid')[y][x + i] != word[i]:
                 collision = True
                 break
         if collision is False:
@@ -28,7 +26,7 @@ def horizontal_forward(word):
     if attempt == 10:
         return False
     for count, letter in enumerate(word):
-        grid[y][x + count] = letter
+        session.get('grid')[y][x + count] = letter
     return True
 
 
@@ -41,7 +39,7 @@ def horizontal_backward(word):
         y = randrange(0, session.get('size'))
         x = randrange(len(word), session.get('size'))
         for i in range(len(word)):
-            if grid[y][x - i] != '_' and grid[y][x - i] != word[i]:
+            if session.get('grid')[y][x - i] != '_' and session.get('grid')[y][x - i] != word[i]:
                 collision = True
                 break
         if collision is False:
@@ -49,7 +47,7 @@ def horizontal_backward(word):
     if attempt == 10:
         return False
     for count, letter in enumerate(word):
-        grid[y][x - count] = letter
+        session.get('grid')[y][x - count] = letter
     return True
 
 
@@ -62,7 +60,7 @@ def vertical_down(word):
         y = randrange(0, session.get('size') - len(word) + 1)
         x = randrange(0, session.get('size'))
         for i in range(len(word)):
-            if grid[y + i][x] != '_' and grid[y + i][x] != word[i]:
+            if session.get('grid')[y + i][x] != '_' and session.get('grid')[y + i][x] != word[i]:
                 collision = True
                 break
         if collision is False:
@@ -70,7 +68,7 @@ def vertical_down(word):
     if attempt == 10:
         return False
     for count, letter in enumerate(word):
-        grid[y + count][x] = letter
+        session.get('grid')[y + count][x] = letter
     return True
 
 
@@ -83,7 +81,7 @@ def vertical_up(word):
         y = randrange(len(word), session.get('size'))
         x = randrange(0, session.get('size'))
         for i in range(len(word)):
-            if grid[y - i][x] != '_' and grid[y - i][x] != word[i]:
+            if session.get('grid')[y - i][x] != '_' and session.get('grid')[y - i][x] != word[i]:
                 collision = True
                 break
         if collision is False:
@@ -91,7 +89,7 @@ def vertical_up(word):
     if attempt == 10:
         return False
     for count, letter in enumerate(word):
-        grid[y - count][x] = letter
+        session.get('grid')[y - count][x] = letter
     return True
 
 
@@ -104,7 +102,7 @@ def diagonal_up(word):
         y = randrange(len(word), session.get('size'))
         x = randrange(0, session.get('size') - len(word) + 1)
         for i in range(len(word)):
-            if grid[y - i][x + i] != '_' and grid[y - i][x + i] != word[i]:
+            if session.get('grid')[y - i][x + i] != '_' and session.get('grid')[y - i][x + i] != word[i]:
                 collision = True
                 break
         if collision is False:
@@ -112,7 +110,7 @@ def diagonal_up(word):
     if attempt == 10:
         return False
     for count, letter in enumerate(word):
-        grid[y - count][x + count] = letter
+        session.get('grid')[y - count][x + count] = letter
     return True
 
 
@@ -125,7 +123,7 @@ def diagonal_down(word):
         y = randrange(0, session.get('size') - len(word) + 1)
         x = randrange(0, session.get('size') - len(word) + 1)
         for i in range(len(word)):
-            if grid[y + i][x + i] != '_' and grid[y + i][x+ i] != word[i]:
+            if session.get('grid')[y + i][x + i] != '_' and session.get('grid')[y + i][x+ i] != word[i]:
                 collision = True
                 break
         if collision is False:
@@ -133,7 +131,7 @@ def diagonal_down(word):
     if attempt == 10:
         return False
     for count, letter in enumerate(word):
-        grid[y + count][x + count] = letter
+        session.get('grid')[y + count][x + count] = letter
     return True
 
 
@@ -152,15 +150,15 @@ def fill_in_the_blanks():
     alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     for i in range(session.get('size')):
         for j in range(session.get('size')):
-            if grid[i][j] == '_':
-                grid[i][j] = choice(alpha)
+            if session.get('grid')[i][j] == '_':
+                session.get('grid')[i][j] = choice(alpha)
 
 
 def initialize_grid():
     """ Replace all letters in grid with '_' """
     for i in range(session.get('size')):
         for j in range(session.get('size')):
-            grid[i][j] = '_'
+            session.get('grid')[i][j] = '_'
 
 
 def populate_puzzle(new_word_list):
@@ -168,15 +166,13 @@ def populate_puzzle(new_word_list):
     if 'grid' in globals():
         initialize_grid()
     else:
-        global grid
-        grid = [['_' for i in range(session.get('size'))] for j in range(session.get('size'))]
+        session['grid'] = [['_' for i in range(session.get('size'))] for j in range(session.get('size'))]
     session.get('word_list').clear()
     session.get('word_list').extend(new_word_list)
     status = randomizer()
     if status is False:
         return False
-    global answer_grid
-    answer_grid = deepcopy(grid)
+    session['answer_grid'] = deepcopy(session.get('grid'))
     fill_in_the_blanks()
     return True
 
@@ -203,13 +199,13 @@ def input_words():
 @app.route('/puzzle', strict_slashes=False)
 def puzzle():
     """ Get the generated word search puzzle """
-    return render_template('puzzle.html', puzzle=grid, words=session.get('word_list'))
+    return render_template('puzzle.html', puzzle=session.get('grid'), words=session.get('word_list'))
 
 
 @app.route('/answer', strict_slashes=False)
 def answer():
     """ Get the generated answer key s"""
-    return render_template('puzzle.html', puzzle=answer_grid, words=session.get('word_list'))
+    return render_template('puzzle.html', puzzle=session.get('answer_grid'), words=session.get('word_list'))
 
 """ disable app.run for deployment with gunicorn """
 if __name__ == '__main__':
